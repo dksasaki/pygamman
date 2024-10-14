@@ -1,0 +1,5 @@
+**.pyc
+*/fortrandata/*fdt
+*/fortrandata/*o
+*/fortrandata/genunformatted
+*/fortrandata/cprog.bat

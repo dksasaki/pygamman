@@ -19,7 +19,13 @@ lat = ym.ravel()
 # masking NaN values
 imask =np.where(~np.isnan(t))
 
-a = gn.gamma_n(s[imask],        # salinity
+#   UNITS:
+#   salinity    psu (IPSS-78)
+#   temperature degrees C (IPTS-68)
+#   pressure    db
+#   gamma       kg m-3
+# also see https://www.teos-10.org/pubs/gsw/pdf/t90_from_t48.pdf
+a = gn.gamma_n(s[imask],        # practical salinity
                t[imask],        # temperature
                p[imask],        # pressure (decibar)
                lon[imask],      # 

@@ -1,0 +1,20 @@
+[build-system]
+build-backend = "mesonpy"
+requires = [
+    "meson-python >=0.16.0",
+    "setuptools",
+    "wheel",
+    "numpy >= 2.0.2",
+]
+
+[project]
+name = "pygamman"
+version = "0.1.0"
+requires-python = ">= 3.9.20"
+dependencies = [
+    "numpy >= 2.0.2",
+]
+
+[tool.setuptools.packages.find]
+where = ["pygamman"]
+include = ["neutral_density.py"]

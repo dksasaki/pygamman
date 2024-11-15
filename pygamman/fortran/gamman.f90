@@ -819,7 +819,6 @@ subroutine gamma_n(s, t, p, n, along, alat, gamma, dg_lo, dg_hi)
   real :: sns, tns, pns  ! TODO verify these variables
   ! external :: indx, read_nc, ocean_test, depth_ns, gamma_qdr, gamma_errors, goor
 
-
   ! Error checking for input coordinates
   if (along < 0.0) then
       along = along + 360.0
@@ -848,10 +847,10 @@ subroutine gamma_n(s, t, p, n, along, alat, gamma, dg_lo, dg_hi)
           dg_hi(k) = 0.0
       end if
   end do
-
+  print *, 'a: ', n0
   ! Read records from the netCDF data file
   call read_nc(along, alat, s0, t0, p0, gamma0, a0, n0, along0, alat0, iocean0)
-
+  print *, 'b: ', n0
   ! Find the closest cast
   dist2_min = 1.0e10
   do j0 = 1, 2
@@ -873,7 +872,6 @@ subroutine gamma_n(s, t, p, n, along, alat, gamma, dg_lo, dg_hi)
   dy = abs(mod(alat + 80.0, real(ndy)))
   rx = dx / real(ndx)
   ry = dy / real(ndy)
-
   do k = 1, n
       if (gamma(k) /= -99.1) then
           thk = theta(s(k), t(k), p(k), pr0)
@@ -904,7 +902,6 @@ subroutine gamma_n(s, t, p, n, along, alat, gamma, dg_lo, dg_hi)
 
                       call ocean_test(along, alat, ioce, along0(i0), alat0(j0), iocean0(i0, j0), p(k), itest)
                       if (itest == 0) wt = 0.0
-
                       call depth_ns(s0(:, i0, j0), t0(:, i0, j0), p0, n0(i0, j0), s(k), t(k), p(k), sns, tns, pns)
                       if (pns > -99.0) then
                           call indx(p0, n0(i0, j0), pns, kns)
@@ -975,6 +972,7 @@ subroutine gamma_n(s, t, p, n, along, alat, gamma, dg_lo, dg_hi)
   elseif (ialtered == 2) then
       along = 360.0
   end if
+  print *, 'n2: ', n0
 
 end subroutine gamma_n
 
@@ -1941,6 +1939,11 @@ subroutine read_nc(along, alat, s0, t0, p0, gamma0, a0, n0, along0, alat0, iocea
   ! Data initialization
   data i0 /1/, j0 /1/
 
+  alat_d(:) = 0.0
+  along_d(:) = 0.0
+  n0(:,:) = 0.0
+  i0 = 1
+  j0 = 1
 
   ! ! Calculate indices
   ! i0 = int(along / ndx + 1)
@@ -1950,18 +1953,22 @@ subroutine read_nc(along, alat, s0, t0, p0, gamma0, a0, n0, along0, alat0, iocea
   ! Only read when necessary
   dx = along - along_d(i0)
   dy = alat - alat_d(j0)
+  print *, along_d(i0), alat_d(j0)
   
-
+  print *, 'read_nc: ', n0, 'dx: ', dx, 'dy: ', dy, 'i0: ', i0, 'j0: ', j0, 'iocean0: ', iocean0
+  
   if (dx < 0.0 .or. dx >= 4.0 &
-        .or. dy < 0.0 .or. dy >= 4.0 .or. (i0 == 1 .and. j0 == 1)) then
+  .or. dy < 0.0 .or. dy >= 4.0 .or. (i0 == 1 .and. j0 == 1)) then
     ! Read the 'llp.fdt' file
     call get_lunit(lun)
     
+
     if (i0 == 1 .and. j0 == 1) then
       open(lun, file='/home/otel/Desktop/deletar/pygamman/pygamman/fortrandata/llp.fdt',&
       status='old', form='unformatted')
       read(lun) along_s, alat_s, p0_s, n, iocean
       close(lun)
+
 
       do i = 1, nx
         along_d(i) = along_s(i)
@@ -2063,6 +2070,7 @@ subroutine read_nc(along, alat, s0, t0, p0, gamma0, a0, n0, along0, alat0, iocea
 
     close(lun1)
   end if
+  print *, 'read_nc2: ',n0
 
 end subroutine read_nc
 
